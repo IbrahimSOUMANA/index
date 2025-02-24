@@ -3,66 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire de Recensement</title>
+    <title>Inscription & Connexion</title>
 </head>
 <body>
-    <h1>Formulaire de Recensement</h1>
-    <form id="form-recensement">
-        <label for="nom">Nom :</label><br>
-        <input type="text" id="nom" name="nom" required><br><br>
+    <h2>Inscription</h2>
+    <form id="registerForm">
+        <input type="text" id="nom" placeholder="Nom" required><br>
+        <input type="text" id="prenom" placeholder="Prénom" required><br>
+        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="password" id="password" placeholder="Mot de passe" required><br>
+        <button type="submit">S'inscrire</button>
+    </form>
 
-        <label for="prenom">Prénom :</label><br>
-        <input type="text" id="prenom" name="prenom" required><br><br>
-
-        <label for="date_naissance">Date de naissance :</label><br>
-        <input type="date" id="date_naissance" name="date_naissance" required><br><br>
-
-        <label for="adresse">Adresse :</label><br>
-        <textarea id="adresse" name="adresse" required></textarea><br><br>
-
-        <label for="email">Email :</label><br>
-        <input type="email" id="email" name="email" ><br><br>
-
-        <label for="telephone">Téléphone :</label><br>
-        <input type="tel" id="telephone" name="telephone" ><br><br>
-
-        <button type="submit">Envoyer</button>
+    <h2>Connexion</h2>
+    <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required><br>
+        <input type="password" id="loginPassword" placeholder="Mot de passe" required><br>
+        <button type="submit">Se connecter</button>
     </form>
 
     <script>
-        // Récupérer le formulaire et l'ajouter un événement submit
-        document.getElementById('form-recensement').addEventListener('submit', function(e) {
-            e.preventDefault();  // Empêche l'envoi du formulaire de manière traditionnelle
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nom = document.getElementById('nom').value;
+            const prenom = document.getElementById('prenom').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-            // Récupérer les données du formulaire
-            const formData = {
-                nom: document.getElementById('nom').value,
-                prenom: document.getElementById('prenom').value,
-                date_naissance: document.getElementById('date_naissance').value,
-                adresse: document.getElementById('adresse').value,
-                email: document.getElementById('email').value,
-                telephone: document.getElementById('telephone').value
-            };
-
-            // Envoyer les données via une requête POST vers l'API
-            fetch('http://192.168.56.1:5000/recensement', {  // Remplacer par l'URL de ton API déployée
+            const response = await fetch('http://127.0.0.1:5000/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)  // Convertir les données en JSON
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);  // Afficher le message de succès ou d'erreur
-                if (data.message === "Données enregistrées avec succès") {
-                    document.getElementById('form-recensement').reset();  // Réinitialiser le formulaire
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                alert('Erreur lors de l\'enregistrement');
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nom, prenom, email, password })
             });
+            const data = await response.json();
+            alert(data.message);
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const response = await fetch('http://127.0.0.1:5000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            alert(data.message);
         });
     </script>
 </body>
